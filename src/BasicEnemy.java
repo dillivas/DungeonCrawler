@@ -1,7 +1,15 @@
 
+package game;
+
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.Random;
+
+import game.Handler;
+import game.ID;
+import game.Lava;
+import game.Render;
+import game.SpriteSheet;
 
 /**
  * date: 1/28/2018       					*
@@ -18,10 +26,10 @@ public class BasicEnemy extends GameObject{
 	 * random set up for its movement, and its hp.
 	 * 
 	 */
-	 protected Handler handler;
+	 private Handler handler;
 	 private Random rand = new Random();
 	 private int choose = 0;
-	 protected int hp = 100;
+	 private int hp = 100;
 	
 	 /**
 	  * BasicEnemy Constructor
@@ -41,25 +49,25 @@ public class BasicEnemy extends GameObject{
 	 */
 	@Override
 	public void tick() {
-		x += speedX;
-		y += speedY;
+		setX(getX() + getSpeedX());
+		setY(getY() + getSpeedY());
 		
 		choose = rand.nextInt(10);
 		//AI behavior found on:
 		//https://www.youtube.com/watch?v=JBGCCAv76YI&t=1s
 		
-		for(int i = 0; i < handler.object.size(); i++) {
-			GameObject tempObject = handler.object.get(i);
+		for(int i = 0; i < handler.getObject().size(); i++) {
+			GameObject tempObject = handler.getObject().get(i);
 					
 			if(tempObject.getID() == ID.Block) {
 				if(getBoundsWall().intersects(tempObject.getBounds())) {
-					x += (speedX*2) * -1;
-					y += (speedY*2) * -1;
-					speedX = 0;
-					speedY = 0;
+					setX(getX() + (getSpeedX()*2) * -1);
+					setY(getY() + (getSpeedY()*2) * -1);
+					setSpeedX(0);
+					setSpeedY(0);
 				}else if(choose == 0) {
-					speedX = (rand.nextInt(4 - -4) + -4);
-					speedY = (rand.nextInt(4 - -4) + -4);
+					setSpeedX((rand.nextInt(4 - -4) + -4));
+					setSpeedY((rand.nextInt(4 - -4) + -4));
 				}
 			}
 			//Collision effects on enemy
@@ -85,7 +93,7 @@ public class BasicEnemy extends GameObject{
 	 */
 	@Override
 	public void render(Graphics g) {
-		g.drawImage(Render.enemyImage,x,y,32,32, null);
+		g.drawImage(Render.getEnemyImage(),getX(),getY(),32,32, null);
 	}
 
 	/**
@@ -93,7 +101,7 @@ public class BasicEnemy extends GameObject{
 	 */
 	@Override
 	public Rectangle getBounds() {
-		return new Rectangle(x ,y ,40,40);
+		return new Rectangle(getX() ,getY() ,40,40);
 	}
 	
 	/**
@@ -101,7 +109,7 @@ public class BasicEnemy extends GameObject{
 	 * @return rectangle for hitbox
 	 */
 	public Rectangle getBoundsWall() {
-		return new Rectangle(x - 16,y - 16,64,64);
+		return new Rectangle(getX() - 16,getY() - 16,64,64);
 	}
 
 

@@ -1,14 +1,33 @@
 
+/**
+ * Info about this package doing something for package-info.java file.
+ * package-info.java;
+ */
+
+package game;
+
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
+import game.GameScreen;
+import game.HUD;
+import game.Handler;
+import game.ID;
+import game.KeyInput;
+import game.Lava;
+import game.Player;
+import game.Render;
+import game.SpriteSheet;
+import game.Window;
+
 /**
  * Function controls the game setup and running.
- * @author William
+ * 
  * date 2/27/2018
  * class Game
+ * @author William
  */
 public class Game extends Canvas implements Runnable{
 
@@ -24,7 +43,7 @@ public class Game extends Canvas implements Runnable{
 	 */
 	private boolean running = false;
 	private static Game game;
-	protected Handler handler;
+	private Handler handler;
 	private Thread thread;
 	private HUD hud;
 	private GameScreen gameScreen;
@@ -32,8 +51,8 @@ public class Game extends Canvas implements Runnable{
 	private BufferedImage spriteSheet = null;
 	private BufferedImage floor = null;
 	private BufferedImage level = null;
-	public static boolean start = false;
-	public static boolean restart = true;
+	private static boolean start = false;
+	private static boolean restart = true;
 
 
 
@@ -68,6 +87,10 @@ public class Game extends Canvas implements Runnable{
 		thread.start();
 		running = true;
 	}
+	
+	/**
+	 * This class restarts the game
+	 */
 	public void restart() {
 		Render.load();
 		handler = new Handler();
@@ -79,7 +102,7 @@ public class Game extends Canvas implements Runnable{
 		floor = ss.grabImage(1, 1, 32, 32);
 		loadLevel(level);
 		hud = new HUD();
-		HUD.HEALTH = 100;
+		HUD.setHealth(100);
 		gameScreen = new GameScreen();
 		this.addKeyListener(new KeyInput(handler, ss));
 
@@ -95,7 +118,7 @@ public class Game extends Canvas implements Runnable{
 			
 			Game.start = false;
 			restart = false;
-			KeyInput.pause = false;
+			KeyInput.setPause(false);
 			game.restart();
 		}
 	}
@@ -132,9 +155,9 @@ public class Game extends Canvas implements Runnable{
 				delta--;
 				updates++;
 				//Used for pause and death screen
-				if ((HUD.HEALTH != 0) && (KeyInput.pause == false) && (Game.start == true)) {
+				if (!(HUD.getHealth() == 0) && (KeyInput.getPause() == false) && (Game.getStart() == true)) {
 					tick();
-				}	
+				}
 				checkForRestart();
 
 			}
@@ -244,11 +267,50 @@ public class Game extends Canvas implements Runnable{
 				if(red == 0 && green == 255 && blue == 0) {
 					handler.addObject(new BasicEnemy(xx*32, yy*32, ID.Enemy,ss,handler));
 				}
+				
 				//////////////////////////////////////////////////////////
+				
 			}
 		}
 	}
-	public static void main(String args[]) {
+	
+	/**
+	 * Getter method for start
+	 * @return start state
+	 */
+	public static boolean getStart() {
+		return start;
+	}	
+	/**
+	 * get restart
+	 * @return restart restart
+	 */
+	public static boolean getRestart() {
+		return restart;
+	}
+	
+	/**
+	 * set start
+	 * @param x restart
+	 */
+	public static void setStart(boolean x) {
+		start  = x;
+	}
+	
+	/**
+	 * set testart
+	 * @param x restart
+	 */
+	public static void setRestart(boolean x) {
+		restart  = x;
+	}
+	
+	/**
+	 * Main method to launch game
+	 * @param args default argument
+	 */
+	public static void main(String args[])
+	{
 		//Start new launch and game
 		game = new Game();
 	}
